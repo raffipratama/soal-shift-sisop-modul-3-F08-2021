@@ -106,6 +106,6 @@ int main(int argc, char *argv[]) {
       			else
         			printf("\nFile %d Yah,Gagal :(\n",i+1);
 		  
-   			}
-		}
+   		}
+	}
 }
