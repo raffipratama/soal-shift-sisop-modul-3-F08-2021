@@ -100,12 +100,12 @@ int main(int argc, char *argv[]) {
 		}
 		for(i = 0; i < argc - 2; i++) {
 			x = pthread_join(tid[i], NULL);
-      if(x == 0){
-        printf("\nFile %d Berhasil dikategorikan\n",i+1);
-      }
-      else
-        printf("\nFile %d Yah,Gagal :(\n",i+1);
+      			if(x == 0){
+       				printf("\nFile %d Berhasil dikategorikan\n",i+1);
+      			}
+      			else
+        			printf("\nFile %d Yah,Gagal :(\n",i+1);
 		  
-    }
-	}
+   			}
+		}
 }
