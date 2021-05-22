@@ -6,10 +6,13 @@
 #include <stdlib.h>
 
 int *matrix;
+int long long hasil[4][6];
 
 typedef struct comp{
     int kiri;
     int kanan;
+    int row;
+    int column;
 }comp;
 
 long long rekursi(int n) {
@@ -26,25 +29,29 @@ long long permutasi(int a, int b)
 
 void *printperm(void *loc)
 {
-  comp *temp = (comp *)loc;
-  printf("%lld\t",permutasi(temp->kiri,temp->kanan));
-}
-
-void *printfac(void *loc)
-{
-  comp *temp = (comp *)loc;
-  printf("%lld\t",rekursi(temp->kiri));
+  comp *tes = (comp *)loc;
+  if((tes->kiri >=tes->kanan) && (tes->kiri !=0) && (tes->kanan !=0))
+        {
+          hasil[tes->row][tes->column]= permutasi(tes->kiri,tes->kanan);
+        }
+  else if((tes->kanan > tes->kiri)  && (tes->kiri !=0) && (tes->kanan !=0))
+        {
+          hasil[tes->row][tes->column]= permutasi(tes->kiri,tes->kiri);
+        }
+  else if((tes->kiri==0) || (tes->kanan ==0))
+        {
+          hasil[tes->row][tes->column] = 0;
+        }
 }
 
 int main()
 {
-  pthread_t thr;
+  pthread_t thr[24];
   key_t key = 1234;
   int rows=4;
   int columns=6;
   int segid,y,i,j,k;
     int array[4][6];
-    long long hasil[4][6];
 segid=shmget(key,sizeof(int[4][6]),IPC_CREAT|0666);
 //printf("%d",segid);
 matrix = (int *)shmat(segid,NULL,0);
@@ -64,31 +71,24 @@ for (i = 0; i < 4; i++)
   {
     for (j = 0; j < 6; j++)
     {
-        if((matrix[i*columns + j]>=array[i][j]) && (matrix[i*columns + j]!=0) && (array[i][j]!=0))
-        {
           comp *tes = (comp*)malloc(sizeof(*tes));
           tes->kiri = matrix[i*columns + j];
-          tes->kanan = array[i][j];
-          pthread_create(&thr, NULL, *printperm, (void *)tes ); 
-          pthread_join(thr,NULL);
-        }
-        else if((array[i][j]>matrix[i*columns + j]  && (matrix[i*columns + j]!=0) && (array[i][j]!=0)))
-        {
-          comp *tes = (comp*)malloc(sizeof(*tes));
-          tes->kiri = matrix[i*columns + j];
-          tes->kanan = array[i][j];
-          pthread_create(&thr, NULL, *printfac, (void *)tes ); 
-          pthread_join(thr,NULL);
-        }
-        else if((matrix[i*columns + j]==0) || (array[i][j]==0))
-        {
-          hasil[i][j] = 0;
-          printf("0\t"); 
-        }
+          tes->kanan = array[i][j]; 
+          tes->row=i;
+          tes->column = j;
+          pthread_create(&thr[i*columns + j], NULL, *printperm, (void *)tes ); 
+    }
+  }
+
+for (i = 0; i < 4; i++)
+  {
+    for (j = 0; j < 6; j++)
+    {
+          pthread_join(thr[i*columns + j], NULL);
+          printf("%lld\t",hasil[i][j]);
     }
     printf("\n");
   }
-
 shmdt(matrix)  ;
 shmctl(segid,IPC_RMID,NULL);
   return 0;
