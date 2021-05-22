@@ -95,15 +95,7 @@ int main(int argc,char const *argv[]) {
   close(pipe1[0]);
   close(pipe1[1]);
 
-  // fork (grep sbin)
-  if ((pid = fork()) == -1) {
-    perror("bad fork3");
-    exit(1);
-  } else if (pid == 0) {
-    // pipe2 --> grep --> stdout
-    exec3();
-  }
+  exec3();
   // parent
-
 
 }
